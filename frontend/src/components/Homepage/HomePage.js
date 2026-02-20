@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./HomePage.css";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase.js";
+import { useNavigate } from "react-router-dom";
 
 const API = "https://vajra-backend.onrender.com";
 
@@ -7,6 +10,24 @@ export default function HomePage() {
   const [data, setData] = useState(null);
   const [status, setStatus] = useState("NO DATA");
   const [lastUpdate, setLastUpdate] = useState(null);
+
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      // 1️⃣ Firebase logout
+      await signOut(auth);
+
+      // 2️⃣ Remove stored token
+      localStorage.removeItem("firebaseToken");
+
+      // 3️⃣ Redirect to login
+      navigate("/");
+
+    } catch (err) {
+      console.log("Logout error:", err);
+    }
+  };
 
   // ================= FETCH =================
   const fetchData = async () => {
@@ -20,6 +41,7 @@ export default function HomePage() {
       }
 
       setData(json);
+      // console.log(json.immobilizer);
       setLastUpdate(new Date());
       evaluateSafety(json);
 
@@ -51,7 +73,11 @@ export default function HomePage() {
   const toggleImmobilizer = async () => {
     if (!data) return;
 
+    let n = 0;
+
+    console.log(data.immobilizer);
     const newState = data.immobilizer ? 0 : 1;
+    console.log(newState);
 
     await fetch(`${API}/api/immobilizer`, {
       method: "POST",
@@ -60,15 +86,15 @@ export default function HomePage() {
       },
       body: JSON.stringify({ state: newState }),
     });
-
     setTimeout(fetchData, 500);
   };
 
   // ================= UI =================
   return (
     <div className="dashboard">
+      <button onClick={handleLogout}>Logout</button>
       <header className="header">
-        <h1>🚗 Vajra Telematics Dashboard</h1>
+        <h1>AURA Telematics Dashboard</h1>
       </header>
 
       <div className="main">
