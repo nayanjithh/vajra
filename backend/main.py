@@ -50,6 +50,7 @@ def receive_packet(data: PacketData, authorization: str = Header(None)):
 
     return {
         "status": "OK",
+        "values": latest_data,
         "immobilizer": immobilizer_command
     }
 
