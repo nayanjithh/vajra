@@ -6,10 +6,15 @@ import time
 import firebase_admin
 from firebase_admin import credentials, auth, firestore
 
+import os
+import json
+
 # =========================
 # FIREBASE INIT (FIRST)
 # =========================
-cred = credentials.Certificate("vajra-fc776-firebase-adminsdk-fbsvc-ae1cb5dc59.json")
+firebase_key = os.environ.get("FIREBASE_KEY")
+
+cred = credentials.Certificate(json.loads(firebase_key))
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
