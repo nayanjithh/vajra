@@ -1,8 +1,20 @@
 from fastapi import FastAPI, Header, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import time
 
 app = FastAPI()
+
+# =========================
+# CORS (VERY IMPORTANT)
+# =========================
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # allow React / browser
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 DEVICE_TOKEN = "MY_DEVICE_123"
 
@@ -64,7 +76,7 @@ def set_immobilizer(cmd: ImmobilizerCommand):
 
 
 # =========================
-# PACKET PARSER (TABLE FORMAT)
+# PACKET PARSER
 # =========================
 def parse_packet(packet: str):
     try:
