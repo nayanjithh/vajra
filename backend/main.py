@@ -47,6 +47,7 @@ def receive_packet(data: PacketData, authorization: str = Header(None)):
 
     parsed = parse_packet(data.packet)
     latest_data = parsed
+    print("Device tried to connect")
 
     return {
         "status": "OK",
