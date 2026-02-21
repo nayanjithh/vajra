@@ -13,7 +13,7 @@ export const loginWithGoogle = async () => {
     console.log("Firebase Token:", token);
 
     // Send token to backend
-    await fetch("http://localhost:8000/auth/verify", {
+    await fetch("https://vajra-backend.onrender.com/auth/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

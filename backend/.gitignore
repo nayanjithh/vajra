@@ -1,4 +1,0 @@
-# Firebase secrets
-*.json
-firebase_key.json
-backend/*firebase*.json
