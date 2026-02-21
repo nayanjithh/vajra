@@ -51,9 +51,21 @@ class ImmobilizerCommand(BaseModel):
 class TokenData(BaseModel):
     token: str
 
+class FrequencyCommand(BaseModel):
+    frequency: int
+
+send_frequency = 5
+
+@app.post("/api/frequency")
+def set_frequency(cmd: FrequencyCommand):
+    global send_frequency
+    send_frequency = max(1, cmd.frequency)   # avoid 0
+    return {"status": "OK", "frequency": send_frequency}
+
 # =========================
 # GOOGLE AUTH VERIFY
 # =========================
+
 @app.post("/auth/verify")
 def verify_user(data: TokenData):
     try:
@@ -92,8 +104,8 @@ def receive_packet(data: PacketData, authorization: str = Header(None)):
 
     return {
         "status": "OK",
-        "values": latest_data,
-        "immobilizer": immobilizer_command
+        "immobilizer": immobilizer_command,
+        "frequency": send_frequency
     }
 
 # =========================
