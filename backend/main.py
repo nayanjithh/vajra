@@ -120,34 +120,47 @@ def set_immobilizer(cmd: ImmobilizerCommand):
 # =========================
 def parse_packet(packet: str):
     try:
-        if "*" not in packet:
-            return {"error": "Missing *"}
+        if not packet.startswith("$") or "*" not in packet:
+            return {"error": "Invalid format"}
 
         clean = packet[1:packet.index("*")]
         parts = clean.split(",")
 
-        if len(parts) < 21:
-            return {"error": f"Invalid field count: {len(parts)}"}
+        if len(parts) != 20:
+            return {"error": f"Expected 20 fields, got {len(parts)}"}
 
         return {
+            "length": int(parts[0]),
             "imei": parts[1],
+
+            "packet_status": int(parts[2]),
             "frame": int(parts[3]),
+
             "operator": parts[4],
             "signal": int(parts[5]),
 
-            "latitude": float(parts[9]) / 1_000_000,
-            "longitude": float(parts[11]) / 1_000_000,
-            "speed": float(parts[15]) / 100,
+            "mcc": int(parts[6]),
+            "mnc": int(parts[7]),
+            "fix": int(parts[8]),
 
-            "ignition_old": parts[16] == "1",
-            "immobilizer": parts[17] == "1",
+            "latitude": int(parts[9]) / 1_000_000,
+            "ns": int(parts[10]),
 
-            "voltage": float(parts[18]) / 10,
+            "longitude": int(parts[11]) / 1_000_000,
+            "ew": int(parts[12]),
+
+            "hdop": int(parts[13]) / 100,
+            "pdop": int(parts[14]) / 100,
+
+            "speed": int(parts[15]) / 100,
+
+            "ignition": int(parts[16]) == 1,
+            "immobilizer": int(parts[17]) == 1,
+
+            "voltage": int(parts[18]) / 10,
             "timestamp": int(parts[19]),
-            "server_time": int(time.time()),
 
-            # NEW FIELD (your added ignitionValue)
-            "ignition": parts[20] == "1"
+            "server_time": int(time.time())
         }
 
     except Exception as e:
